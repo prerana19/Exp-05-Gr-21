@@ -110,7 +110,7 @@ and creates an output image.*/
 Mat cellType1(Mat inputImage, string flag)
 {
 	Mat outputImage = inputImage.clone();
-	int intensity;
+	int intensity = 0;
 	if (flag == "Dilate")
 	{
 		cout << "Dilating the Binary Image" << endl;
@@ -202,13 +202,12 @@ Mat callStructure(Mat binaryImage, string flag, int cellOption)
 Mat readImage(string& fileName, string type)
 {
 	cout << endl << "Please Select " << type << " Image." << endl;
-	cout << "Example <morphology.png> <dots_morpho.jpg> " << endl;
+	cout << "Example <ricegrains.bmp> " << endl;
 
 	cin >> fileName;
 
-	fileName = fileName;
 	cout << "File Selected: " << fileName << endl;
-	Mat inputImage = imread(fileName, IMREAD_GRAYSCALE);
+	Mat inputImage = imread(fileName, 0);
 
 	return inputImage;
 }
@@ -219,6 +218,7 @@ int main() {
 	int option;
 	int cellOption;
 	string fileName;
+	char exit_key;
 
 	cout << "Assignment 5: Morphological Operations" << endl;
 	cout << "Select an Image " << endl;
@@ -229,72 +229,76 @@ int main() {
 		char c = getchar();
 		return -1;
 	}
+	do{
+		Mat binaryImage = createBinaryImage(inputImage);
 
-	Mat binaryImage = createBinaryImage(inputImage);
+		cout << "Select the following options" << endl;
+		cout << "   1.  Erode Binary" << endl;
+		cout << "   2.  Dilate Binary" << endl;
+		cout << "   3.  Open Binary" << endl;
+		cout << "   4.  Close Binary" << endl;
+		cin >> option;
 
-	cout << "Select the following options" << endl;
-	cout << "   1.  Erode Binary" << endl;
-	cout << "   2.  Dilate Binary" << endl;
-	cout << "   3.  Open Binary" << endl;
-	cout << "   4.  Close Binary" << endl;
-	cin >> option;
+		cout << "Please enter the type of stuctural Element" << endl;
+		cout << "   1. A rectangle with of 1x2" << endl;
+		cout << "   2. A diamond with all 1 3x3" << endl;
+		cout << "   3. A Square with all 1 3x3" << endl;
+		cout << "   4. A Square with all 1 9x9" << endl;
+		cout << "   5. A Square with all 1 15x15" << endl;
+		cin >> cellOption;
 
-	cout << "Please enter the type of stuctural Element" << endl;
-	cout << "   1. A rectangle with of 1x2" << endl;
-	cout << "   2. A diamond with all 1 3x3" << endl;
-	cout << "   3. A Square with all 1 3x3" << endl;
-	cout << "   4. A Square with all 1 9x9" << endl;
-	cout << "   5. A Square with all 1 15x15" << endl;
-	cin >> cellOption;
+		namedWindow("Input Image");
+		imshow("Input Image", inputImage);
 
-	namedWindow("Input Image");
-	imshow("Input Image", inputImage);
+		namedWindow("Input Binary Image");
+		imshow("Input Binary Image", binaryImage);
 
-	namedWindow("Input Binary Image");
-	imshow("Input Binary Image", binaryImage);
+		Mat outputImage;
+		Mat outputImage_2;
 
-	Mat outputImage;
-	Mat outputImage_2;
+		switch (option)
+		{
+		case 1:
+			cout << "Image Erode Binary" << endl;
+			outputImage = callStructure(binaryImage, "Erode", cellOption);
+			namedWindow("Output Image");
+			imshow("Output Image", outputImage);
+			break;
+		case 2:
+			cout << "Image Dilate Binary" << endl;
+			outputImage = callStructure(binaryImage, "Dilate", cellOption);
+			namedWindow("Output Image");
+			imshow("Output Image", outputImage);
+			break;
+		case 3:
+			cout << "Image Open Binary" << endl;
+			outputImage = callStructure(binaryImage, "Erode", cellOption);
+			outputImage_2 = callStructure(outputImage, "Dilate", cellOption);
+			namedWindow("Output Eroded Image");
+			imshow("Output Eroded Image", outputImage);
+			namedWindow("Output Open Image");
+			imshow("Output Open Image", outputImage_2);
+			break;
+		case 4:
+			cout << "Image  Close Binary" << endl;
+			outputImage = callStructure(binaryImage, "Dilate", cellOption);
+			outputImage_2 = callStructure(outputImage, "Erode", cellOption);
+			namedWindow("Output Dilated Image");
+			imshow("Output Dilated Image", outputImage);
+			namedWindow("Output Close Image");
+			imshow("Output Close Image", outputImage_2);
+			break;
+		default:
+			cout << "Option not found!!" << endl;
+			char c = getchar();
+			return -1;
+		}
+		waitKey();
+			cout << "\nWould you like to exit? (y/n):";
+			cin >> exit_key;
+			cout << endl << endl;
+	} while (exit_key == 'n');
 
-	switch (option)
-	{
-	case 1:
-		cout << "Image Erode Binary" << endl;
-		outputImage = callStructure(binaryImage, "Erode", cellOption);
-		namedWindow("Output Image");
-		imshow("Output Image", outputImage);
-		break;
-	case 2:
-		cout << "Image Dilate Binary" << endl;
-		outputImage = callStructure(binaryImage, "Dilate", cellOption);
-		namedWindow("Output Image");
-		imshow("Output Image", outputImage);
-		break;
-	case 3:
-		cout << "Image Open Binary" << endl;
-		outputImage = callStructure(binaryImage, "Erode", cellOption);
-		outputImage_2 = callStructure(outputImage, "Dilate", cellOption);
-		namedWindow("Output Eroded Image");
-		imshow("Output Eroded Image", outputImage);
-		namedWindow("Output Open Image");
-		imshow("Output Open Image", outputImage_2);
-		break;
-	case 4:
-		cout << "Image  Close Binary" << endl;
-		outputImage = callStructure(binaryImage, "Dilate", cellOption);
-		outputImage_2 = callStructure(outputImage, "Erode", cellOption);
-		namedWindow("Output Dilated Image");
-		imshow("Output Dilated Image", outputImage);
-		namedWindow("Output Close Image");
-		imshow("Output Close Image", outputImage_2);
-		break;
-	default:
-		cout << "Option not found!!" << endl;
-		char c = getchar();
-		return -1;
-	}
-
-	waitKey();
 	return 0;
 
 }
