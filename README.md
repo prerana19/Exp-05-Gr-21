@@ -6,7 +6,7 @@ Select the required operation:
    1.  Erode Binary
    2.  Dilate Binary
    3.  Open Binary
-   4.  Close Binary;
+   4.  Close Binary; </br>
 Select the type of structural element:
    1. A rectangle with of 1x2
    2. A diamond with all 1 3x3
